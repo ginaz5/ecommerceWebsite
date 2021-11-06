@@ -1,8 +1,14 @@
 from django.shortcuts import render
 
-# Create your views here.
+from apps.store.models import Product
+
 def frontpage(request):
-    return render(request, 'frontpage.html')
+    products = Product.objects.all() # get all products from db
+
+    context = {
+        'products': products
+    }
+    return render(request, 'frontpage.html', context)
 
 def contact(request):
     return render(request, 'contact.html')
