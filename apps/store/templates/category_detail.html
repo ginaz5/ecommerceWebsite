@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ category.title }} | {% endblock %}
+
 {% block content %}
 
     <h1 class="title">{{ category.title }}</h1>
+    
     <div class="columns is-multiline">
         {% for product in products %}
         <div class="column is-3">
