@@ -15,19 +15,15 @@ class Cart(object):
     
     # get products from db
     def __iter__(self):
-        product_ids = self.cart.keys()
-        product_clean_ids = []
-        for p in product_ids:
-            product_clean_ids.append(p)
-            self.cart[str(p)]['product'] = Product.objects.get(pk=p)
 
-        for item in self.cart.values():
-            item['total_price'] = int(item['price']) * int(item['quantity'])
+        for p, item in self.cart.items():
+            item['product'] = Product.objects.get(pk=p)
+            item['total_price'] = float(item['price']) * int(item['quantity']) # dollar might be float
 
             yield item
 
-    def __len__(self):
-        return sum(item['quantity'] for item in self.cart.values())
+    def get_total_length(self):
+        return sum(int(item['quantity']) for item in self.cart.values())
 
     def add(self, product, quantity=1, update_quantity=False):
         product_id = str(product.id)
