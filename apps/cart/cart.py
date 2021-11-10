@@ -48,3 +48,6 @@ class Cart(object):
     def save(self):
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
+    
+    def get_total_cost(self):
+        return sum(float(item['total_price']) for item in self.cart.values())
