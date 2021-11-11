@@ -6,7 +6,7 @@
     <div id="cartapp">
         <h1 class="title">Cart</h1>
         {% if cart %}
-            <div class="table">
+            <div class="table" v-if="products.length > 0">
                 <table class="table">
                     <thead>
                         <th>Product</th>
@@ -33,6 +33,57 @@
                     </tfoot>
                 </table>
             </div>
+            
+            <div class="field">
+                <div class="control">
+                    <label>First Name</label>
+                    <input type="text" name="first_name" v-model="first_name">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" v-model="last_name">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label>E-mail</label>
+                    <input type="text" name="email" v-model="email">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label>Address</label>
+                    <input type="text" name="address" v-model="address">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label>Zip Code</label>
+                    <input type="text" name="zipcode" v-model="zipcode">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label>Place</label>
+                    <input type="text" name="place" v-model="place">
+                </div>
+            </div>
+
+            <form v-on:submit.prevent="submitForm()">
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary">Check out</button>
+                    </div>
+                </div>
+            </form>
+            <p v-else>Your cart is empty!</p>
         {% else %}
             <p>Your cart is empty!</p>
         {% endif %}
@@ -47,6 +98,12 @@
         store: store,
         data() {
             return {
+                first_name: '',
+                last_name: '',
+                email: '',
+                address: '',
+                zipcode: '',
+                place: '',
                 products: [{{ productsstring|safe }}]
             }
         },
@@ -59,6 +116,38 @@
             }
         },
         methods: {
+            submitForm(){
+                console.log("submit form");
+
+                var data = {
+                    'first_name': this.first_name,
+                    'last_name': this.last_name,
+                    'email': this.email,
+                    'address': this.address,
+                    'zipcode': this.zipcode,
+                    'place': this.place,
+                };
+
+                fetch('/api/checkout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application.json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(data)
+                })
+                .then((response) => {
+                    console.log("success");
+                    console.log(response);
+
+                    window.location.href ='/';
+                })
+                .catch(function (error) {
+                    console.log('Error 2');
+                    console.log(error);
+                })
+            },
             incrementQuantity(product_id, quantity, price) {
                 console.log('Product_id', product_id); // test
 
@@ -106,41 +195,45 @@
                     'product_id': product_id, 
                     'update': true,
                     'quantity': parseInt(quantity) - 1,
-                };
-                
-                store.commit('increment', -1);
-                store.commit('changeTotalCost', parseFloat(price));
+                }; 
 
-                fetch('/api/add_to_cart/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application.json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    credentials: 'same-origin',
-                    body: JSON.stringify(data)
-                })
-                .then((response) => {
-                    console.log(response)
 
-                    for (var i = 0; i < this.products.length; i++){
-                        var product = this.products[i];
+                if  (parseInt(quantity) -1 === 0) {
+                    this.removeFromCart(product_id);
+                } else {
+                    store.commit('increment', -1);
+                    store.commit('changeTotalCost', -parseFloat(price));
+                    
+                    fetch('/api/add_to_cart/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application.json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify(data)
+                    })
+                    .then((response) => {
+                        console.log(response)
 
-                        if (product.id === product_id) {
-                            this.products[i].quantity = parseInt(this.products[i].quantity) - 1;
-                            this.products[i].total_price = parseInt(this.products[i].quantity) * parseFloat(this.products[i].price) 
+                        for (var i = 0; i < this.products.length; i++){
+                            var product = this.products[i];
+
+                            if (product.id === product_id) {
+                                this.products[i].quantity = parseInt(this.products[i].quantity) - 1;
+                                this.products[i].total_price = parseInt(this.products[i].quantity) * parseFloat(this.products[i].price) 
+                            }
                         }
-                    }
-                })
-                .catch(function (error) {
-                    console.log('Error 2');
-                    console.log(error);
-                })
-
+                    })
+                    .catch(function (error) {
+                        console.log('Error 2');
+                        console.log(error);
+                    })
+                }
             },
 
             removeFromCart(product_id){
-                console.log('Product_id', product_id); // test
+                console.log('Remove Product_id', product_id); // test
 
                 var data = {
                     'product_id': product_id,
