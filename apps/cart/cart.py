@@ -53,4 +53,4 @@ class Cart(object):
         self.session.modified = True
     
     def get_total_cost(self):
-        return sum(float(item['total_price']) for item in self) 
+        return sum(float(item['total_price']) for item in self)

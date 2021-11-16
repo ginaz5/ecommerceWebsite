@@ -35,10 +35,32 @@ def create_checkout_session(request):
     session = stripe.checkout.Session.create(
         payment_method_types = ['card'],
         line_items = items,
-        mode = 'payment',
+        mode = 'payment', 
         success_url = 'http://127.0.0.1:8000/cart/success',
         cancel_url = 'http://127.0.0.1:8000/cart/'
     )
+
+    # Create order
+    data = json.loads(request.body)
+    first_name = data['first_name']
+    last_name = data['last_name']
+    email = data['email']
+    address = data['address']
+    zipcode = data['zipcode']
+    place = data['place']
+    payment_intent = session.payment_intent
+
+    orderid = checkout(request, first_name, last_name, email, address, zipcode, place)
+
+    total_price = 0.00
+    for item in cart:
+        total_price += (float(product.price)* int(item['quantity']))
+
+    order = Order.objects.get(pk=orderid)
+    order.payment_intent = payment_intent # check data from stripe
+    order.paid_amount = total_price
+    order.save() 
+
     
     return JsonResponse({'session':session})
 
