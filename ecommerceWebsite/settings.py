@@ -73,8 +73,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'apps.store.context_processors.menu_categories',
-                'apps.cart.context_processors.cart',
+                'apps.store.context_processors.menu_categories', # to allow user can access menu all over the website
+                'apps.cart.context_processors.cart', # same as above
             ],
         },
     },

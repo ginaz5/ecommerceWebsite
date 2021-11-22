@@ -26,8 +26,8 @@ class Product(models.Model):
     description = models.TextField(blank=True, null=True) # it could be empty
     price = models.FloatField()
     is_featured = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='media/uploads/', blank=True, null=True)
-    thumbnail = models.ImageField(upload_to='media/uploads/',blank=True, null=True)
+    image = models.ImageField(upload_to='uploads/', blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='uploads/',blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -44,10 +44,10 @@ class Product(models.Model):
         self.thumbnail = self.make_thumnail(self.image)
         super().save(*args, **kwargs)
 
-    def make_thumnail(self, image, size=(300, 200)):
+    def make_thumnail(self, image, size=(200, 200)):
         img = Image.open(image)
         img.convert('RGB')
-        img.thumbnail(size)
+        img.thumbnail(size, Image.ANTIALIAS) # add filter
 
         thumb_io = BytesIO()
         img.save(thumb_io, 'JPEG', quality=85)
