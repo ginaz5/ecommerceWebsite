@@ -52,13 +52,14 @@ def create_checkout_session(request):
 
     orderid = checkout(request, first_name, last_name, email, address, zipcode, place)
 
-    total_price = 0.00
-    for item in cart:
-        total_price += (float(product.price)* int(item['quantity']))
+    # total_price = 0.00
+    # for item in cart:
+    #     total_price += (float(product.price)* int(item['quantity']))
 
     order = Order.objects.get(pk=orderid)
     order.payment_intent = payment_intent # check data from stripe
-    order.paid_amount = total_price
+    order.paid_amount = cart.get_total_cost()
+    order.paid = True
     order.save() 
 
     

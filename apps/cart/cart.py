@@ -53,7 +53,4 @@ class Cart(object):
         self.session.modified = True
     
     def get_total_cost(self):
-        try:
-            return sum(round(float(item['total_price'])) for item in self.cart.values())
-        except Exception:
-            return 0
+        return sum(round(float(item['total_price']), 2) for item in self)
