@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.store',
     'apps.cart',
     'apps.order',
+    'django_extensions', # to generate UML from Models
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+} 
