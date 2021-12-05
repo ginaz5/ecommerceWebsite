@@ -4,7 +4,7 @@ The website displays products. Users can add and remove products to/from their c
 
 ## Demo
 
-![eCommerce_demo](https://imgur.com/a/f981FL3)
+![eCommerce_demo](https://imgur.com/a/RflOGVC)
 
 ## Development Structure
 Backend: Python
