@@ -7,10 +7,15 @@ The website displays products. Users can add and remove products to/from their c
 
 ## Development Structure
 Backend: Python
+
 Framework: Django
+
 Front-end: HTML, CSS, Javascript(Vue.js), Bulma
+
 Database: db.sqlite3
-Payment Intergration: Stripe
+
+Payment Integration: Stripe
+
 
 - Use Vue.js and Bulma to create an interactive page and cross-platform support.
 - Use Django ORM to communicate with the database
